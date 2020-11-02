@@ -12,9 +12,9 @@ class Account(models.Model):
     AccBalance = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.AccountNum
+        return self.AccountNumber
 
-class Card(models.Model):
+class ATMCard(models.Model):
     ATMCardNumber=models.CharField(max_length=200)
     AccountNum=models.ForeignKey(Account,on_delete=models.CASCADE)
     PIN=models.IntegerField(default=0)
@@ -29,6 +29,7 @@ class Card(models.Model):
     def expired_recently(self):
         return self.ExpirationDate < datetime.date.today()
     def accoutReturn(self):
+        return self.ATMCardNumber
         return self.ATMCardNumber
     class Meta:
         verbose_name="ATM Card"
@@ -50,7 +51,13 @@ class Machine(models.Model):
 
 ##class Refill(models.Model):
 ##
-##class userActivity(models.Model):
+class userActivity(models.Model):
+    pin=models.IntegerField(default=0)
+
+    def __str__(self):
+        return str(self.pin)
+    def returnpin(self):
+        return self.pin
 ##
 ##class updatePhone(models.Model):
     

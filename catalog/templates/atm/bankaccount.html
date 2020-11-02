@@ -1,0 +1,55 @@
+{% extends 'atm/base.html' %}
+
+<html>
+  <head>
+    <title></title>
+  </head>
+  <body>
+    {% block body %}
+<h1>Welcome, {{userName}}!</h1>
+<h2>Account Number: {{AccountNumber}}</h2>
+<div class = "container">
+<br>
+<div class="row mb-5">
+<div class="col">
+<form action = 'balance' method='GET'>
+  <button type="submit" name="button" class="btn button adjust-button-padding btn-light" style="background-color:#FF1493; color:white; border-color:#FF1493"><h1>1</h1><h3>Check Balance</h3></button>
+</form>
+</div>
+<div class="col">
+<form action = 'withdrawal' method='GET'>
+  <button type="submit" name="button"class="btn button adjust-button-padding btn-light"style="background-color:#FFA500; color:white; border-color:#FFA500; padding-bottom: 40px;"><h1>2</h1><h3>Withdrawal</h3></button>
+</form>
+</div>
+</div>
+<div class="row mb-5">
+<div class="col">
+<form action = 'transfer' method='GET'>
+  <button type="submit" name="button"class="btn button adjust-button-padding btn-light"style="background-color:#c20e9b; color:white; border-color:#c20e9b; padding-bottom: 40px; padding-left: 237px; padding-right: 220px;"><h1 style="margin-left: -1em;">3</h1><h3 style="margin-left: -1em;">Transfer</h3></button>
+</form>
+</div>
+<div class="col">
+<form action = "changePhone" method='GET'>
+  <button type="submit" name="button"class="btn button adjust-button-padding btn-light"style="background-color:#749BEB; color:white; border-color:#749BEB"><h1>4</h1><h3>Change Phone&nbsp;</h3></button>
+</form>
+</div>
+</div>
+<div class="row mb-5">
+<div class="col">
+<form  action='pinChange'method='GET'>
+  <button type="submit" name="button" class="btn button adjust-button-padding btn-light" style="background-color:#008000; color:white; border-color:#008000"><h1>5</h1><h3>Change Pin</h3></button>
+</form>
+
+</div>
+<div class="col">
+<div class ="container4">
+<form action="logout" method='GET'>
+
+<button type="submit" name="button" class="btn button adjust-button-padding btn-danger"><h1>6</h1><h3>Return Card</h3></button>
+</form>
+</div>
+</div>
+</div>
+{% endblock %}
+  </body>
+</html>
