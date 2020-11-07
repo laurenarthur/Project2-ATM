@@ -2,6 +2,8 @@ from django.db import models
 from django.utils import timezone
 import datetime
 from django.db.models.signals import post_save
+from django.core.validators import MinLengthValidator, MinValueValidator
+from django.contrib.auth.models import User #, AbstractUser
 
 # Create your models here.
 
@@ -42,7 +44,8 @@ class Machine(models.Model):
     lastFill=models.DateField("Date Issued: ")
     nextMain = models.DateField("Date Issued: ")
     previousBalance=models.IntegerField(default= 0)
-    
+    minimumBalance=models.IntegerField(default=0)
+
     def __str__(self):
         return "ATM - "+str(self.UID)
     class Meta:
@@ -60,4 +63,3 @@ class userActivity(models.Model):
         return self.pin
 ##
 ##class updatePhone(models.Model):
-    

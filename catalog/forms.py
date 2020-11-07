@@ -17,3 +17,8 @@ class HomeForm(forms.Form):
 
         #if ATMCard.objects.filter(PIN=pinentered).is
         return pinentered
+
+class WithdrawForm(forms.Form):
+    amount = forms.IntegerField(min_value=1)
+    account = forms.IntegerField()
+    atm = forms.IntegerField()

@@ -1,13 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from catalog.models import ATMCard, Account, Machine, userActivity
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
-from catalog.forms import HomeForm
+from catalog.forms import HomeForm, WithdrawForm
 
 # Create your views here.
 
 def base(request):
     return render(request, 'atm/base.html')
+
 def home(request):
     if request.method=="POST":
         form=HomeForm(request.POST)
@@ -38,7 +39,7 @@ def home(request):
             return render(request,'atm/login.html',ctx)
     form=HomeForm()
     return render (request, 'atm/login.html',{'form': form})
-    
+
 def mainmenu(request):
     getPin = userActivity.objects.last().returnpin()
     UsersATMCard=ATMCard.objects.filter(PIN=getPin)
@@ -50,3 +51,20 @@ def mainmenu(request):
 
     }
     return render(request,'atm/bankaccount.html',contents)
+
+
+def BalanceView(request):
+    getPin = userActivity.objects.last().returnpin()
+    UsersATMCard=ATMCard.objects.filter(PIN=getPin)
+    UsersAccount=Account.objects.all()
+    account = UsersATMCard[0].AccountNum
+    balance = UsersAccount[0].AccBalance
+    contents={
+    "AccountNumber": account,
+    "AccBalance": balance
+    }
+    return render(request,'atm/balance.html', contents)
+
+def WithdrawView(request):
+    form = WithdrawForm()
+    return render(request, "atm/withdraw.html", {'form': form})
