@@ -53,7 +53,28 @@ class Machine(models.Model):
 
 
 ##class Refill(models.Model):
-##
+class refillATM(models.Model):
+    refillID=models.CharField(max_length=200)
+    UID=models.ForeignKey(Machine,on_delete=models.CASCADE)
+    amount=models.IntegerField(default=0)
+    #ATM BRANCH????
+
+    def save(self,*args,**kwargs):
+        super(refillATM,self).save(*args,**kwargs)
+        newBalance= self.UID.currentBalance+self.amount
+        prevBalance=self.UID.currentBalance
+        j=self.UID
+        j.previousBalance=prevBalance
+        j.currentBalance=self.UID.currentBalance=newBalance
+        j.lastFill=datetime.date.today()
+        j.nextMain=(datetime.date.today())+datetime.timedelta(days=30)
+        j.save()
+
+
+    def __str__(self):
+        return self.refillID+"-"+str(self.UID.UID)
+    class Meta:
+        verbose_name='Refill ATM Machine'
 class userActivity(models.Model):
     pin=models.IntegerField(default=0)
 

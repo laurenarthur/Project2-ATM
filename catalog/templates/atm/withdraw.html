@@ -1,6 +1,10 @@
 {% extends 'atm/base.html' %}
-
-{% block content %}
+<html>
+  <head>
+    <title></title>
+  </head>
+  <body>
+{% block body %}
 <h1>Withdrawal</h1>
 
 <div class = "container">
@@ -8,10 +12,15 @@
     {% csrf_token %}
     {{ form.as_p }}
     <br><br>
-    <input class="btn light-blue darken-1 white-text" type="submit" value="submit" />
-
-  </form>
-  Already have cards with us? <a href="{% url 'card' %}"> View them here. </a>
+	<div class="row">
+	<div class="col">
+    <button class="btn btn-success" type="submit" name="button"> Submit </button>
+  </form
+  <form action="bankaccount" method='GET'>
+      <button type="submit" name="button"class="btn btn-danger">cancel</button>
+      </form>
+	  </div>
+	  </div>
 </div>
 
 {% endblock %}

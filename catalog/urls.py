@@ -1,12 +1,13 @@
 from django.urls import path
+#from django.conf.urls import  url
 from . import views
 
 urlpatterns = [
-     path('', views.base, name='base'),
-     path('login',views.home, name='home'),
+     path('', views.home, name='login'),
+     path('login',views.home, name='login'),
      path('bankaccount',views.mainmenu, name='bankaccount'),
      path('balance',views.BalanceView, name='balance'),
-     path('withdraw', views.WithdrawView, name='withdraw'),
+     path('withdraw/', views.WithdrawView, name='withdraw'),
 
 
 ]

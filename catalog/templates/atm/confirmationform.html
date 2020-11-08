@@ -1,0 +1,24 @@
+{% extends 'atm/base.html' %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <title></title>
+  </head>
+  <body>
+  {% block body %}
+	<br>
+    <h2>Previous Balance</h2>
+    <h3>${{PreviousAmount}}</h3>
+    <h2>Amount withdrawal</h2>
+    <h3>${{amountwithdrawan}}</h3>
+
+    <h2>New Balance</h2>
+    <h3>${{balance}}</h3>
+	<br>
+	<form action="bankaccount" method='POST'>
+		<a href ="http://127.0.0.1:8000/catalog/bankaccount" type="submit" name="button" class="btn btn-light">Main Menue</a>
+    </form>
+{% endblock %}
+
+  </body>
+</html>

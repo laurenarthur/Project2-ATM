@@ -7,7 +7,7 @@ from catalog.forms import HomeForm, WithdrawForm
 # Create your views here.
 
 def base(request):
-    return render(request, 'atm/base.html')
+    return render(request, 'atm/login.html')
 
 def home(request):
     if request.method=="POST":
@@ -66,5 +66,49 @@ def BalanceView(request):
     return render(request,'atm/balance.html', contents)
 
 def WithdrawView(request):
-    form = WithdrawForm()
+    if request.method == "POST": 
+        form = WithdrawForm(request.POST)
+        
+        if form.is_valid():
+            userAmount = form.cleaned_data['amount']
+            
+            getPinObject = userActivity.objects.last();
+            getUserpin = getPinObject.returnpin()
+            
+            #get Pin from ATMCard model
+            getATMPIN =ATMCard.objects.filter(PIN=getUserpin)
+            
+            #Get Account Number
+            accountNumber=Account.objects.filter(AccountNumber=(getATMPIN[0].AccountNum))
+            
+            #Get balance
+            balance=accountNumber[0].AccBalance
+            
+            #compute new balance
+            newBalance =  balance-userAmount
+            ATMMachineFind=Machine.objects.filter(pk=1)
+            ATMAmount=ATMMachineFind[0].currentBalance
+            ATMMachineFind.update(currentBalance=(ATMAmount-userAmount))
+            
+            #set new balance to newAccount
+            Account.objects.filter(AccountNumber=(accountNumber[0].AccountNumber)).update(AccBalance=newBalance)
+            
+            #create dictionary with user's new account after withdrawal
+            contents={
+            'balance':  accountNumber[0].AccBalance,
+            'PreviousAmount': balance,
+            'amountwithdrawan': userAmount,
+                }
+            #send dictionary with confirmation page
+            return render(request,'atm/confirmationform.html',contents)
+            
+        else:
+            #dictionary with current page
+            ctx={"form":form}
+
+            #send page again with validation errors
+            return render(request,'atm/withdraw.html',ctx)
+
+    form=WithdrawForm()
+            
     return render(request, "atm/withdraw.html", {'form': form})
