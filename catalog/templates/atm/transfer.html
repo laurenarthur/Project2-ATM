@@ -1,0 +1,28 @@
+{% extends 'atm/base.html' %}
+<html>
+  <head>
+    <title></title>
+  </head>
+  <body>
+{% block body %}
+<h1>Transfer</h1>
+
+<div class = "container">
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <br><br>
+	<div class="row">
+	<div class="col">
+    <button class="btn btn-success" type="submit" name="button"> Submit </button>
+  </form
+  <form action="bankaccount" method='GET'>
+      <button type="submit" name="button"class="btn btn-danger">cancel</button>
+      </form>
+	  </div>
+	  </div>
+</div>
+
+{% endblock %}
+</body>
+</html>

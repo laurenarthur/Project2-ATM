@@ -8,6 +8,7 @@ urlpatterns = [
      path('bankaccount',views.mainmenu, name='bankaccount'),
      path('balance',views.BalanceView, name='balance'),
      path('withdraw/', views.WithdrawView, name='withdraw'),
+     path('transfer', views.TransferView, name='transfer'),
 
 
 ]
