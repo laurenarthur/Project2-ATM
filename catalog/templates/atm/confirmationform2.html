@@ -9,17 +9,18 @@
 	<br>
     <h2>Previous Balance</h2>
     <h3>${{PreviousAmount}}</h3>
+    <h2>New Balance</h2>
+    <h3>${{balance}}</h3>
     <h2>Amount Transferred</h2>
     <h3>${{amountTransferred}}</h3>
     <h2>Transferred To</h2>
-    <h3>${{receiver}}</h3>
+    <h3>{{receiver}}</h3>
     <h2>Their Balance</h2>
     <h3>${{receiverBalance}}</h3>
 
 
 
-    <h2>New Balance</h2>
-    <h3>${{balance}}</h3>
+
 	<br>
 	<form action="bankaccount" method='POST'>
 		<a href ="http://127.0.0.1:8000/catalog/bankaccount" type="submit" name="button" class="btn btn-light">Main Menu</a>

@@ -49,10 +49,8 @@ class WithdrawForm(forms.Form):
 class TransferForm(forms.Form):
 
     amount = forms.IntegerField(validators=[MinValueValidator(1)], label="Transfer Amount", required=True)
-    #receiver = forms.ModelChoiceField(queryset=Account.objects.all(), required=True)
-    receiver = forms.CharField(
-        validators=[MinLengthValidator(0)],
-        max_length=12)
+    receiver = forms.ModelChoiceField(queryset=Account.objects.all(), required=True)
+    #receiver = forms.CharField(validators=[MinLengthValidator(1)], max_length=12, required=True) - Was having trouble validating this one, can remove if we prefer dropdown
 
     def clean_Transfer (self, *args, **kwargs):
         amount = self.cleaned_data.get('amount')
@@ -61,10 +59,8 @@ class TransferForm(forms.Form):
         ATMMachine = Machine.objects.filter(pk=1)
 
         #Check if account exists
-        try:
-            instance = Account.objects.get(AccountNumber=self.cleaned_data['receiver'])
-        except Account.DoesNotExist:
-            instance = None
+        if not Account.objects.filter(AccountNumber=receiver).exists():
+            raise forms.ValidationError("Account does not exist")
 
         #Check if they entered negative or zero amount
         if amount <= 0 :

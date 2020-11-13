@@ -54,11 +54,20 @@ def mainmenu(request):
 
 
 def BalanceView(request):
-    getPin = userActivity.objects.last().returnpin()
-    UsersATMCard=ATMCard.objects.filter(PIN=getPin)
-    UsersAccount=Account.objects.all()
-    account = UsersATMCard[0].AccountNum
-    balance = UsersAccount[0].AccBalance
+    #Pin for identity
+    getPinObject = userActivity.objects.last();
+    getUserpin = getPinObject.returnpin()
+
+    #get Pin from ATMCard model
+    getATMPIN =ATMCard.objects.filter(PIN=getUserpin)
+
+    #Get Account Number
+    accountNumber=Account.objects.filter(AccountNumber=(getATMPIN[0].AccountNum))
+
+    #Clean input
+    account=accountNumber.values_list('AccountNumber')[0][0]
+
+    balance = accountNumber[0].AccBalance
     contents={
     "AccountNumber": account,
     "AccBalance": balance
@@ -138,19 +147,18 @@ def TransferView(request):
             newBalance =  balance-userAmount
             newBalance2 = balance2+userAmount
 
-            ATMMachineFind=Machine.objects.filter(pk=1)
-            ATMAmount=ATMMachineFind[0].currentBalance
-            ATMMachineFind.update(currentBalance=(ATMAmount))
-
             #set new balance to newAccount
             Account.objects.filter(AccountNumber=(accountNumber[0].AccountNumber)).update(AccBalance=newBalance)
+
+            #Clean Output
+            user2=accountNumber2.values_list('userName')[0][0]
 
             #create dictionary with user's new account after withdrawal
             contents={
             'balance':  accountNumber[0].AccBalance,
             'PreviousAmount': balance,
             'amountTransferred': userAmount,
-            'receiver': accountNumber2,
+            'receiver': user2,
             'receiverBalance': newBalance2
                 }
             #send dictionary with confirmation page
