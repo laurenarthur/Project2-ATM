@@ -139,6 +139,10 @@ def TransferView(request):
             accountNumber=Account.objects.filter(AccountNumber=(getATMPIN[0].AccountNum))
             accountNumber2=Account.objects.filter(AccountNumber=form.cleaned_data['receiver'])
 
+            #Self Transfer
+            if accountNumber is accountNumber2:
+                userAmount = '0'
+
             #Get balance
             balance=accountNumber[0].AccBalance
             balance2=accountNumber2[0].AccBalance
@@ -147,14 +151,21 @@ def TransferView(request):
             newBalance =  balance-userAmount
             newBalance2 = balance2+userAmount
 
+
             #set new balance to newAccount
             Account.objects.filter(AccountNumber=(accountNumber[0].AccountNumber)).update(AccBalance=newBalance)
+            Account.objects.filter(AccountNumber=(accountNumber2[0].AccountNumber)).update(AccBalance=newBalance2)
 
             #Clean Output
             user2=accountNumber2.values_list('userName')[0][0]
 
-            #create dictionary with user's new account after withdrawal
+
+
+
+            #create dictionary with user's new account after transfer
             contents={
+            'account1': accountNumber,
+            'account2': accountNumber2,
             'balance':  accountNumber[0].AccBalance,
             'PreviousAmount': balance,
             'amountTransferred': userAmount,
