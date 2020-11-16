@@ -1,0 +1,23 @@
+{% extends 'atm/base.html' %}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    {% block body %}
+	<div class="container3">
+<br>
+    <h3>Enter Code:</h3>
+    <form action = "checkCode" method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+      <button type="submit" name="button" class="btn btn-success">Check</button>
+    </form>
+	</div>
+    {% endblock %}
+
+  </body>
+</html>

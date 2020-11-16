@@ -13,10 +13,13 @@
       <form method="POST">
       {% csrf_token %}
       {{form.as_p}}
-        <button type="submit" name="button" class="btn btn-success">Sign In</button>
+
+        <button type="submit" name="button" class="btn btn-success" style="padding: 1em; font-weight:bold;">Sign In</button>
       </form>
 
     </div>
+
 {% endblock %}
+
   </body>
 </html>

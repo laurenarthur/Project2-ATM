@@ -83,4 +83,6 @@ class userActivity(models.Model):
     def returnpin(self):
         return self.pin
 ##
-##class updatePhone(models.Model):
+class updatePhone(models.Model):
+    AccountNum = models.CharField(max_length=10)
+    newNumber = models.IntegerField()

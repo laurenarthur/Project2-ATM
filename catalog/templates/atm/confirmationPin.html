@@ -1,0 +1,17 @@
+{% extends 'atm/base.html' %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+      {% block body %}
+	  <div class="container3">
+    <h1>Sucessfully Changed Pin!</h1>
+    <form  action= "login" method='GET'>
+    <button type="submit" name="button"class="btn btn-success">login again</button>
+    </form>
+    {% endblock %}
+  </body>
+</html>

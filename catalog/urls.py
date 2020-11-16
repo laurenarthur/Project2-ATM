@@ -9,6 +9,10 @@ urlpatterns = [
      path('balance',views.BalanceView, name='balance'),
      path('withdraw/', views.WithdrawView, name='withdraw'),
      path('transfer', views.TransferView, name='transfer'),
+     path('changePhone',views.changePhone, name='changephone'),
+     path('checkCode',views.checkCode,name='checkcode'),
+     path('codeSent',views.codeSent,name='codesent'),
+     path('pinChange',views.pinChange, name= 'pinchange'),
 
 
 ]

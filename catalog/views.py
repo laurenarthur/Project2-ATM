@@ -1,8 +1,8 @@
 from django.shortcuts import render,redirect
-from catalog.models import ATMCard, Account, Machine, userActivity
+from catalog.models import ATMCard, Account, Machine, userActivity, updatePhone
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
-from catalog.forms import HomeForm, WithdrawForm, TransferForm
+from catalog.forms import HomeForm, WithdrawForm, TransferForm,phoneForm,checkCodeForm,newPinForm
 
 # Create your views here.
 
@@ -185,3 +185,80 @@ def TransferView(request):
     form=TransferForm()
 
     return render(request, "atm/transfer.html", {'form': form})
+
+#Function that changes phone Number
+def changePhone(request):
+    if request.method=="POST":
+        form = phoneForm(request.POST)
+
+        if form.is_valid():
+            #Sends correct info to page
+            new_newPhoneNumber = form.cleaned_data['newPhoneNumber']
+            new_AccountNumber = form.cleaned_data['AccountNumber']
+
+            userInput = updatePhone(AccountNum = new_AccountNumber, newNumber = new_newPhoneNumber)
+            userInput.save()
+
+            return render(request, 'atm/codeSent.html')
+
+        else:
+            #incorrect inputs keeps user on this page
+            ctx={"form":form}
+
+            return render(request, 'atm/changePhone.html', {'form':form})
+    form=phoneForm()
+    return render (request, 'atm/changePhone.html',{'form': form})
+
+def checkCode(request):
+    if request.method=="POST":
+        form=checkCodeForm(request.POST)
+        if form.is_valid():
+            #we would update phone Number
+            new_passCode = form.cleaned_data['passCode']
+            #account number to be changed
+            acctToChange= updatePhone.objects.last()
+            #find account based on this Number
+            temp =acctToChange.AccountNum
+            compare = Account.objects.filter(AccountNumber= temp)
+            #replace old phone with new phone
+            Nphone = acctToChange.newNumber
+            compare.update(phoneNumber=Nphone)
+
+            return render(request,'atm/sucess.html')
+        else:
+            #incorrect keeps at this page
+            ctx={"form":form}
+            return render(request,'atm/checkCode.html',ctx)
+
+    form=checkCodeForm()
+    return render(request,'atm/checkCode.html',{'form': form})
+
+def codeSent(request):
+     return render(request,'atm/codeSent.html')
+
+def pinChange(request):
+
+    if request.method=="POST":
+
+        form=newPinForm(request.POST)
+        if form.is_valid():
+
+            old_pin = form.cleaned_data['old_pin']
+            new_pin = form.cleaned_data['new_pin']
+
+
+            #redirect to allow user to choose what do to their bank account
+            card =ATMCard.objects.filter(PIN=old_pin)
+            print(card)
+            card.update(PIN=new_pin)
+
+
+            return render(request,'atm/confirmationPin.html')
+
+        #form not valid return to login screen with validation error raised
+        else:
+
+            ctx={"form":form}
+            return render(request,'atm/changePinInformation.html',ctx)
+    form=newPinForm()
+    return render(request,'atm/changePinInformation.html',{'form':form})

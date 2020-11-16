@@ -1,0 +1,20 @@
+{% extends 'atm/base.html' %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+      {% block body %}
+	  <br>
+	  <div class="container3">
+    <h2>Verification code sent to number provided.</h2>
+	<br><br>
+    <form action= "checkCode" method='GET'>
+    <button type="submit" name="button"class="btn btn-light" style="background-color:#749BEB; color:white; border-color:#749BEB" >Check your Code</button>
+    </form>
+	</div>
+    {% endblock %}
+  </body>
+</html>

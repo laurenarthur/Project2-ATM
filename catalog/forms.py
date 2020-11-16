@@ -22,7 +22,7 @@ class HomeForm(forms.Form):
 
 class WithdrawForm(forms.Form):
 
-    amount = forms.IntegerField(validators=[MinValueValidator(1)], label="Withdrawal Amount", required=True)
+    amount = forms.IntegerField(label="Withdrawal Amount", required=True)
 
     def clean_withdrawBalance (self, *args, **kwargs):
         amount = self.cleaned_data.get('amount')
@@ -81,3 +81,61 @@ class TransferForm(forms.Form):
             raise forms.ValidationError("Insufficient funds.")
 
         return amount
+
+class phoneForm(forms.Form):
+    #Enter new phone number prompt
+    AccountNumber = forms.CharField(max_length=10, label="Account Number", required=True)
+
+    newPhoneNumber = forms.IntegerField(label="New Phone Number", required=True)
+
+    #Code
+    def clean_AccountNumber(self,*args, **kwargs):
+        new_AccountNumber = self.cleaned_data.get("AccountNumber")
+
+        if not Account.objects.filter(AccountNumber=new_AccountNumber).exists():
+            raise forms.ValidationError("Not a valid account")
+
+        return new_AccountNumber
+
+        def clean_newPhoneNumber(self, *args,**kwargs):
+            new_newPhoneNumber = self.cleaned_data.get("newPhoneNumber")
+
+            if(new_newPhoneNumber < 1000000000 or new_newPhoneNumber > 9999999999):
+                raise forms.ValidationError("Number needs to be 10 digits")
+            return new_newPhoneNumber
+
+class checkCodeForm(forms.Form):
+    passCode = forms.IntegerField(label = "Pass Code", required=True)
+
+    def clean_passCode(self, *args,**kwargs):
+        new_passCode = self.cleaned_data.get("passCode")
+
+        if(new_passCode != 1111111122222222222):
+            raise forms.ValidationError("Incorrect Code")
+        return new_passCode
+
+class newPinForm(forms.Form):
+    old_pin = forms.IntegerField(label="Old Pin", required=True)
+    new_pin = forms.IntegerField(label="New Pin", required=True)
+
+    def clean_old_pin (self, *args, **kwargs):
+        old_entered = self.cleaned_data.get("old_pin")
+        if old_entered <=999 or old_entered >= 10000:
+            raise forms.ValidationError("Not a valid pin")
+        if not ATMCard.objects.filter(PIN=old_entered).exists():
+            raise forms.ValidationError("Not a valid pin.")
+        Card=ATMCard.objects.filter(PIN=old_entered)
+        if Card[0].expired_recently():
+            raise forms.ValidationError("Not a pin")
+        if old_entered != userActivity.objects.last().returnpin():
+            raise forms.ValidationError("Unauthorized")
+
+        return old_entered
+
+    def clean_new_pin (self,*args,**kwargs):
+        new_pin=self.cleaned_data.get("new_pin")
+        if new_pin <=999 or new_pin >=10000:
+            raise forms.ValidationError("Not a valid pin.")
+        if ATMCard.objects.filter(PIN=new_pin).exists():
+            raise forms.ValidationError("Pin already in use.")
+        return new_pin

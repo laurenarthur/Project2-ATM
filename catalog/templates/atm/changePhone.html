@@ -1,0 +1,26 @@
+{% extends 'atm/base.html' %}
+<!DOCTYPE html>
+
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+  {% block body %}
+  <div class="container3">
+
+    <h1>You are going to change your phone number</h1>
+    <form action= "changePhone" method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit" name="button" class="btn btn-success">Submit</button>
+    </form>
+	<form action="mainmenu" method='GET'>
+    <button type="submit" name="button"class="btn btn-danger">cancel</button>
+	</form>
+
+	</div>
+	{% endblock %}
+  </body>
+</html>
