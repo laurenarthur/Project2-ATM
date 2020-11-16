@@ -43,7 +43,7 @@ class Machine(models.Model):
     status=models.BooleanField(default=False)
     lastFill=models.DateField("Date Issued: ")
     nextMain = models.DateField("Date Issued: ")
-    previousBalance=models.IntegerField(default= 0)
+    ##previousBalance=models.IntegerField(default= 0)
     minimumBalance=models.IntegerField(default=0)
 
     def __str__(self):
