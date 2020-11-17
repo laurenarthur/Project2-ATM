@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from catalog.models import ATMCard, Account, Machine, userActivity, updatePhone
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
-from catalog.forms import HomeForm, WithdrawForm, TransferForm,phoneForm,checkCodeForm,newPinForm
+from catalog.forms import HomeForm, withdrawalForm, TransferForm,phoneForm,checkCodeForm,newPinForm
 
 # Create your views here.
 
@@ -74,16 +74,17 @@ def BalanceView(request):
     }
     return render(request,'atm/balance.html', contents)
 
-def WithdrawView(request):
-    if request.method == "POST":
-        form = WithdrawForm(request.POST)
-
+def withdrawal(request):
+    if request.method=="POST":
+        form=withdrawalForm(request.POST)
         if form.is_valid():
-            userAmount = form.cleaned_data['amount']
+            userAmount = form.cleaned_data['withdrawalBalance']
 
-            getPinObject = userActivity.objects.last();
-            getUserpin = getPinObject.returnpin()
+            #Get pin use entered
+            getPinObject = userActivity.objects.last()
 
+
+            getUserpin=getPinObject.returnpin()
             #get Pin from ATMCard model
             getATMPIN =ATMCard.objects.filter(PIN=getUserpin)
 
@@ -91,13 +92,14 @@ def WithdrawView(request):
             accountNumber=Account.objects.filter(AccountNumber=(getATMPIN[0].AccountNum))
 
             #Get balance
-            balance=accountNumber[0].AccBalance
+            getbalance=accountNumber[0].AccBalance
 
             #compute new balance
-            newBalance =  balance-userAmount
+            newBalance =  getbalance-userAmount
             ATMMachineFind=Machine.objects.filter(pk=1)
             ATMAmount=ATMMachineFind[0].currentBalance
             ATMMachineFind.update(currentBalance=(ATMAmount-userAmount))
+
 
             #set new balance to newAccount
             Account.objects.filter(AccountNumber=(accountNumber[0].AccountNumber)).update(AccBalance=newBalance)
@@ -105,9 +107,10 @@ def WithdrawView(request):
             #create dictionary with user's new account after withdrawal
             contents={
             'balance':  accountNumber[0].AccBalance,
-            'PreviousAmount': balance,
-            'amountwithdrawan': userAmount,
+            'PreviousAmount': getbalance,
+            'amountwithdrawan':userAmount,
                 }
+
             #send dictionary with confirmation page
             return render(request,'atm/confirmationform.html',contents)
 
@@ -117,25 +120,24 @@ def WithdrawView(request):
 
             #send page again with validation errors
             return render(request,'atm/withdraw.html',ctx)
+    form=withdrawalForm()
+    return render (request, 'atm/withdraw.html',{'form': form})
 
-    form=WithdrawForm()
-
-    return render(request, "atm/withdraw.html", {'form': form})
-
-def TransferView(request):
-    if request.method == "POST":
-        form = TransferForm(request.POST)
-
+def transfer(request):
+    if request.method=="POST":
+        form=TransferForm(request.POST)
         if form.is_valid():
-            userAmount = form.cleaned_data['amount']
 
-            getPinObject = userActivity.objects.last();
-            getUserpin = getPinObject.returnpin()
+            amount_entered=form.cleaned_data['amount_transfer']
 
-            #get Pin from ATMCard model
+            getPinObject = userActivity.objects.last()
+
+
+            getUserpin=getPinObject.returnpin()
+                #get Pin from ATMCard model
             getATMPIN =ATMCard.objects.filter(PIN=getUserpin)
 
-            #Get Account Number
+                #Get Account Number
             accountNumber=Account.objects.filter(AccountNumber=(getATMPIN[0].AccountNum))
             accountNumber2=Account.objects.filter(AccountNumber=form.cleaned_data['receiver'])
 
@@ -144,12 +146,12 @@ def TransferView(request):
                 userAmount = '0'
 
             #Get balance
-            balance=accountNumber[0].AccBalance
+            getbalance=accountNumber[0].AccBalance
             balance2=accountNumber2[0].AccBalance
 
             #compute new balance
-            newBalance =  balance-userAmount
-            newBalance2 = balance2+userAmount
+            newBalance =  getbalance-amount_entered
+            newBalance2 = balance2+amount_entered
 
 
             #set new balance to newAccount
@@ -163,28 +165,23 @@ def TransferView(request):
 
 
             #create dictionary with user's new account after transfer
-            contents={
+            content={
             'account1': accountNumber,
             'account2': accountNumber2,
             'balance':  accountNumber[0].AccBalance,
-            'PreviousAmount': balance,
-            'amountTransferred': userAmount,
+            'PreviousAmount': getbalance,
+            'amountTransferred': amount_entered,
             'receiver': user2,
             'receiverBalance': newBalance2
                 }
             #send dictionary with confirmation page
-            return render(request,'atm/confirmationform2.html',contents)
+            return render(request,'atm/confirmationform2.html',content)
 
         else:
-            #dictionary with current page
             ctx={"form":form}
-
-            #send page again with validation errors
             return render(request,'atm/transfer.html',ctx)
-
     form=TransferForm()
-
-    return render(request, "atm/transfer.html", {'form': form})
+    return render(request,'atm/transfer.html',{'form': form})
 
 #Function that changes phone Number
 def changePhone(request):

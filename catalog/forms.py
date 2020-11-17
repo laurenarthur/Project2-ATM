@@ -20,35 +20,36 @@ class HomeForm(forms.Form):
         #if ATMCard.objects.filter(PIN=pinentered).is
         return pinentered
 
-class WithdrawForm(forms.Form):
+class withdrawalForm(forms.Form):
+    withdrawalBalance= forms.IntegerField(label="Withdrawal Amount",required=True)
 
-    amount = forms.IntegerField(label="Withdrawal Amount", required=True)
+    def clean_withdrawalBalance (self,*args,**kwargs):
+        withdrawalBalance = self.cleaned_data.get('withdrawalBalance')
 
-    def clean_withdrawBalance (self, *args, **kwargs):
-        amount = self.cleaned_data.get('amount')
+        ATM_Machine = Machine.objects.filter(pk=1)
 
-        ATMMachine = Machine.objects.filter(pk=1)
 
-        #Check if they entered negative or zero amount
-        if amount <= 0 :
-            raise forms.ValidationError("Invalid")
+        #Make sure they didn't input a negative or 0 amount
+        if withdrawalBalance <= 0 :
+            raise forms.ValidationError("Invalid.")
+        #get first object in the user's activity model
         getUserPin = userActivity.objects.last()
 
-        pin = getUserPin.returnpin()
+        pin=getUserPin.returnpin()
         getATMObject =ATMCard.objects.filter(PIN=pin)
         AccountNum=Account.objects.filter(AccountNumber=(getATMObject[0].AccountNum))
 
         #Check if user has enough in bank to withdrawal this amount
-        if(amount > int(AccountNum[0].AccBalance)):
+        if(withdrawalBalance > int(AccountNum[0].AccBalance)):
             raise forms.ValidationError("Insufficient funds.")
-        if(amount>ATMMachine[0].currentBalance):
+        if(withdrawalBalance>ATM_Machine[0].currentBalance):
             raise forms.ValidationError("ATM too low")
 
-        return amount
+        return withdrawalBalance
 
 class TransferForm(forms.Form):
 
-    amount = forms.IntegerField(validators=[MinValueValidator(1)], label="Transfer Amount", required=True)
+    amount_transfer = forms.IntegerField(label="Transfer Amount", required=True)
     receiver = forms.ModelChoiceField(queryset=Account.objects.all(), required=True)
 
     #Prevent Self Transfer
@@ -60,26 +61,27 @@ class TransferForm(forms.Form):
         self.fields['receiver'].queryset = Account.objects.exclude(AccountNumber=(getATMObject[0].AccountNum))
         self.redirect = False
 
-    def clean_Transfer (self, *args, **kwargs):
-        amount = self.cleaned_data.get('amount')
-        receiver = self.cleaned_data.get('receiver')
+    def clean_amount_transfer(self,*args,**kwargs):
 
-        ATMMachine = Machine.objects.filter(pk=1)
+        amount = self.cleaned_data.get("amount_transfer")
+        ATM_Machine = Machine.objects.filter(pk=1)
 
 
-        #Check if they entered negative or zero amount
-        if amount <= 0 :
-            raise forms.ValidationError("Invalid")
+
+
+        if(amount<=0):
+            raise forms.ValidationError("Cannot be less than 1")
+        if(amount>ATM_Machine[0].currentBalance):
+            raise forms.ValidationError("Insufficient funds.")
+
         getUserPin = userActivity.objects.last()
 
-        pin = getUserPin.returnpin()
+        pin=getUserPin.returnpin()
         getATMObject =ATMCard.objects.filter(PIN=pin)
         AccountNum=Account.objects.filter(AccountNumber=(getATMObject[0].AccountNum))
 
-        #Check if user has enough in bank to transfer this amount
-        if(amount > int(AccountNum[0].AccBalance)):
+        if(AccountNum[0].AccBalance < amount):
             raise forms.ValidationError("Insufficient funds.")
-
         return amount
 
 class phoneForm(forms.Form):
